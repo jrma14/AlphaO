@@ -36,12 +36,12 @@ def choseMove():
 
 def makeMove(i, j):
     f = open('move_file', 'w')
-    f.write(f'Alpha0 {i} {j}')
+    f.write(f'AlphaO {i} {j}')
     f.close()
 
 
 def waitForTurn():
-    while not exists('Alpha0.go'):
+    while not exists('AlphaO.go'):
         print('waiting for turn')
     if exists('end_game'):
         print('game over, did I win?')
