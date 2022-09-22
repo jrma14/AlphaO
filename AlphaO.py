@@ -6,7 +6,7 @@ mark = 'O'
 timelimit = 10  # seconds
 
 localBoards = [[0 for i in range(9)] for i in range(9)]
-globalBoard = [[0 for i in range(3)] for i in range(3)]
+globalBoard = [0 for i in range(9)]
 
 f = open("first_four_moves", "r")
 
