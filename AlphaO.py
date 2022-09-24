@@ -1,4 +1,7 @@
 from os.path import exists
+import json
+
+data = json.load(open('sample.json'))
 
 mark = 'O'
 
@@ -11,11 +14,21 @@ globalBoard = [0 for i in range(9)]
 f = open("first_four_moves", "r")
 
 for line in f:
-    localBoards[int(int(line[2]) / 3) * 3 + int(int(line[4]) / 3)][int(line[4]) % 3 + int(line[2]) % 3 * 3] = line[0]
+    localBoards[int(line[2])][int(line[4])] = line[0]
     print(line)
 f.close()
 
-print(localBoards)
+# for localBoard in localBoards:
+#     ret = ''
+#     for x in localBoard:
+#         if x == 'X':
+#             ret += '1'
+#         if x == 'O':
+#             ret += '-1'
+#         if x == 0:
+#             ret += '0'
+#     print(data[ret])
+# print(localBoards)
 
 
 def readMove():
