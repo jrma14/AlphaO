@@ -247,6 +247,6 @@ for b in sort:
     resMap[b.bToStr()] = b.cost
     resMap[b.bToInvStr()] = -1 * b.cost
 json_object = json.dumps(resMap, indent=4)
-with open("sample.json", "w") as outfile:
+with open("data.json", "w") as outfile:
     outfile.write(json_object)
 

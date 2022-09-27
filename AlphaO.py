@@ -1,7 +1,7 @@
 from os.path import exists
 import json
 
-data = json.load(open('sample.json'))
+data = json.load(open('data.json'))
 
 mark = 'O'
 
@@ -17,6 +17,7 @@ for line in f:
     localBoards[int(line[2])][int(line[4])] = line[0]
     print(line)
 f.close()
+
 
 # for localBoard in localBoards:
 #     ret = ''
@@ -44,7 +45,7 @@ def readMove():
 
 
 def choseMove():
-    return (0,0)
+    return (0, 0)
 
 
 def makeMove(i, j):
