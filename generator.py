@@ -121,33 +121,28 @@ def permuteBoard(b: board, move):  # permutes a board object
 def generate():  # generates all permutations of boards
     f = open('combins', 'w')
     queue = []
-    move = 0
     currBoard = [0 for i in range(9)]
-    queue.extend(permute(currBoard, move))
-    while move < 8:
+    queue.extend(permute(currBoard, 0))
+    move = 0
+    while len(queue) > 0 and move < 8:
         move += 1
         nodesToAdd = []
         while len(queue) > 0:
             currBoard = queue.pop()
-            allBoards.append(currBoard)
             nodesToAdd.extend(permute(currBoard, move))
         queue = nodesToAdd
-    print(len(allBoards))
-    f.write(str(allBoards))
+    print(len(queue))
+    f.write(str(queue))
 
 
 def permute(board, move):  # places 3 different players in the given spot on the array board
-    try:
-        ret = []
-        players = [-1, 0, 1]
-        for player in players:
-            temp = board.copy()
-            temp[move] = player
-            ret.append(temp)
-        return ret
-    except Exception as e:
-        print(move)
-        print(e)
+    ret = []
+    players = [-1, 0, 1]
+    for player in players:
+        temp = board.copy()
+        temp[move] = player
+        ret.append(temp)
+    return ret
 
 
 def makeMove(board, move, player):  # makes move on board and returns that board as array, not the object
@@ -156,7 +151,7 @@ def makeMove(board, move, player):  # makes move on board and returns that board
     return temp
 
 
-def allCombs():  # 900,000
+def allCombs():  # 300,000
     queue = []
     player = 1
     for move in getNextPossibleMoves(globalBoard):
@@ -167,7 +162,6 @@ def allCombs():  # 900,000
         allBoards.append(currBoard)
         for move in getNextPossibleMoves(currBoard):
             queue.insert(0, makeMove(currBoard, move, player))
-    print('done!')
     print(len(allBoards))
     g.write(str(allBoards))
 
@@ -225,28 +219,27 @@ def checkWin(board):  # single array
     return 0
 
 
-# generate()
+generate()
 # cost()
 # maketree()
 # allCombs()
 
-b = board()
-idkanymore(b, 1)
-res = []
+# b = board()
+# idkanymore(b, 1)
+# res = []
 
-print('Num combinations:', len(allCosts))
-res = list(set(allCosts))
-
-f = open('testingcost.txt', 'w')
-sort = sorted(res, key=lambda b: b.cost)
-for b in sort:
-    f.write(str(b))
-
-resMap = {}
-for b in sort:
-    resMap[b.bToStr()] = b.cost
-    resMap[b.bToInvStr()] = -1 * b.cost
-json_object = json.dumps(resMap, indent=4)
-with open("data.json", "w") as outfile:
-    outfile.write(json_object)
-
+# print('Num combinations:', len(allCosts))
+# res = list(set(allCosts))
+#
+# f = open('testingcost.txt', 'w')
+# sort = sorted(res, key=lambda b: b.cost)
+# for b in sort:
+#     f.write(str(b))
+#
+# resMap = {}
+# for b in sort:
+#     resMap[b.bToStr()] = b.cost
+#     resMap[b.bToInvStr()] = -1 * b.cost
+# json_object = json.dumps(resMap, indent=4)
+# with open("data.json", "w") as outfile:
+#     outfile.write(json_object)
