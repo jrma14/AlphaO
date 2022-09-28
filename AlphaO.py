@@ -75,6 +75,12 @@ def main():
         else:
 
 
+#positions: array of array of arrays of len 9, list of positions of big board
+#maximizePlayer: boolean if we are maximizing or minimizing
+#returns sorted array of array of arrays
+def sort(currBoard, positions, maximizePlayer):
+    return sorted(positions, key=lambda pos: evaluatePosition(pos, currBoard), reverse=maximizePlayer)
+
 
 def evaluatePosition(position,currentBoard):
     eval = 0
