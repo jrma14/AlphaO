@@ -83,14 +83,14 @@ def evaluatePosition(position,currentBoard):
     mainBd = []
     evalMultiplier = [1.4,1,1.4,1,1.75,1,1.4,1,1.4]
     for x in range(9):
-        eval += evaluateSquare(position[x])*1.5*evalMultiplier[x]
+        eval += evaluate(position[x])*1.5*evalMultiplier[x]
         if x == currentBoard:
-            eval += evaluateSquare(position[x]*evalMultiplier[x])
+            eval += evaluate(position[x]*evalMultiplier[x])
         tmpEval = checkWinCondition(position[x])
         eval -= tmpEval*evalMultiplier[x]
         mainBd[x] = tmpEval
     eval -= checkWinCondition(mainBd)*5000
-    eval += evaluateSquare(mainBd)*150
+    eval += evaluate(mainBd)*150
 
     return eval
 
@@ -101,6 +101,9 @@ def evaluatePosition(position,currentBoard):
 def sort(currBoard, positions, maximizePlayer):
     return sorted(positions, key=lambda pos: evaluatePosition(pos, currBoard), reverse=maximizePlayer)
 
+
+def evaluate(square):
+    return costs[str(square)]
 
 def evaluateSquare(square):
     eval = 0
