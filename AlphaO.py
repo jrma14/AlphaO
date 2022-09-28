@@ -39,6 +39,7 @@ def readMove():
 
 
 def choseMove():
+    miniMax()
     return (0,0)
 
 
@@ -58,23 +59,28 @@ def waitForTurn():
 
 def main():
     #initialize game board, first 4 moves
+    while not exists('AlphaO.go'):
+        print('waiting for turn')
+    if exists('end_game'):
+        print('game over, did I win?')
+    else:
+        readMove()
 
-
-    #while the game isn't over keep playing.
-    while not exists('end_game'):
-
-        #if its our turn start playing
-        if exists('AlphaO.go'):
-            #perform minimax
-
-
-            #write outcome of minimax to move file
-
-
-
-
-        #if its not our turn wait.
-        else:
+    # #while the game isn't over keep playing.
+    # while not exists('end_game'):
+    #
+    #     #if its our turn start playing
+    #     if exists('AlphaO.go'):
+    #         #perform minimax
+    #
+    #
+    #         #write outcome of minimax to move file
+    #
+    #
+    #
+    #
+    #     #if its not our turn wait.
+    #     else:
             
 
 
