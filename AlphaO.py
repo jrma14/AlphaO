@@ -1,7 +1,11 @@
 from ast import main
+import json
 from json.encoder import INFINITY
 from multiprocessing.connection import wait
 from os.path import exists
+
+costs = json.load(open('costs.json'))
+
 
 mark = 'O'
 
