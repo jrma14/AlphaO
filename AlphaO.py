@@ -62,7 +62,7 @@ def main():
         #if its our turn start playing
         if exists('AlphaO.go'):
             #perform minimax
-
+            a = 4
 
             #write outcome of minimax to move file
 
@@ -70,8 +70,6 @@ def main():
 
 
         #if its not our turn wait.
-        else:
-            
 
 
 def evaluatePosition(position,currentBoard):
@@ -150,18 +148,76 @@ def evaluateSquare(square):
 
 
 def checkWinCondition(square):
+    a = 1
+    if (square[0] + square[1] + square[2] == a * 3 or square[3] + square[4] + square[5] == a * 3 or square[6] + square[7] + square[8] == a * 3 or square[0] + square[3] + square[6] == a * 3 or square[1] + square[4] + square[7] == a * 3 or
+        square[2] + square[5] + square[8] == a * 3 or square[0] + square[4] + square[8] == a * 3 or square[2] + square[4] + square[6] == a * 3):
+        return a
+    
+    a = -1
+    if (square[0] + square[1] + square[2] == a * 3 or square[3] + square[4] + square[5] == a * 3 or square[6] + square[7] + square[8] == a * 3 or square[0] + square[3] + square[6] == a * 3 or square[1] + square[4] + square[7] == a * 3 or
+        square[2] + square[5] + square[8] == a * 3 or square[0] + square[4] + square[8] == a * 3 or square[2] + square[4] + square[6] == a * 3):
+        return a
+    
+    return 0
+
+class Move:
+    def __init__(self,position,move):
+        self.position = position
+        self.move = move
+        self.cost = evaluatePosition(position,move[0])
+
+
+
+def getPossibleMoves(position, boardToPlay, maximizingPlayer):
+    player = -1
+    if(maximizingPlayer):
+        player = 1
+    nextPossibleMoves = []
+
+    if checkWinCondition(position[boardToPlay]) == 0 and position[boardToPlay].contains(0):
+        for x in range(9):
+            if position[boardToPlay][x] == 0:
+                tmp = position.copy()
+                tmp[boardToPlay][x] = player
+                move = Move(tmp,[boardToPlay,x])
+                nextPossibleMoves.append(move)
+    else:
+        for x in range(9):
+            if(checkWinCondition(position[x]) == 0):
+                for y in range(9):
+                    if position[x][y] == 0:
+                        tmp = position.copy()
+                        tmp[x][y] = player
+                        move = Move(tmp,[x,y])
+                        nextPossibleMoves.append(move)
+    nextPossibleMoves = sorted(nextPossibleMoves, key=lambda m: m.cost)
+    return nextPossibleMoves                    
+
+
+
+
 
 
 
 def miniMax(position,boardToPlay, depth, alpha, beta, maximizingPlayer):
     if depth == 0:
         return position
-    if maximizingPlayer == True:
+    if maximizingPlayer == False:
         maxEval = -INFINITY
-        nextMovePossibilities = getPossibleMoves(position,boardToPlay,alpha,beta,False)
+        nextMovePossibilities = getPossibleMoves(position,boardToPlay,False)
         for child in nextMovePossibilities:
-            eval = miniMax(child,)
+            eval = miniMax(child,child.move[1], depth -1, alpha,beta, True)
+            maxEval = max(maxEval,eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                break
+        return maxEval 
 
+    if maximizingPlayer == True:
+        minEval = INFINITY
+        nextMovePossibilities = getPossibleMoves(position,boardToPlay,True)
+        for child in nextMovePossibilities:
+            eval = miniMax()
 
 
 
