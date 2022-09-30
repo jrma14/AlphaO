@@ -201,24 +201,33 @@ def getPossibleMoves(position, boardToPlay, maximizingPlayer):
 
 def miniMax(position,boardToPlay, depth, alpha, beta, maximizingPlayer):
     if depth == 0:
-        return position
+        tmpMove = Move(position,[-1,-1])
+        return tmpMove
     if maximizingPlayer == False:
-        maxEval = -INFINITY
+        maxEval = Move(position,[0,0])
+        maxEval.cost = -INFINITY
         nextMovePossibilities = getPossibleMoves(position,boardToPlay,False)
         for child in nextMovePossibilities:
-            eval = miniMax(child,child.move[1], depth -1, alpha,beta, True)
-            maxEval = max(maxEval,eval)
-            alpha = max(alpha, eval)
+            eval = miniMax(child.position,child.move[1], depth -1, alpha,beta, True)
+            if eval.cost > maxEval.cost:
+                maxEval = eval
+            alpha = max(alpha, eval.cost)
             if beta <= alpha:
                 break
-        return maxEval 
+        return maxEval
 
     if maximizingPlayer == True:
-        minEval = INFINITY
+        minEval = Move(position,[0,0])
+        minEval.cost = INFINITY
         nextMovePossibilities = getPossibleMoves(position,boardToPlay,True)
         for child in nextMovePossibilities:
-            eval = miniMax()
-
+            eval = miniMax(child.position,child.move[1],depth-1,alpha,beta,False)
+            if eval.cost < minEval.cost:
+                minEval = eval
+            beta = min(beta,eval.cost)
+            if beta <= alpha:
+                break
+        return minEval
 
 
 
