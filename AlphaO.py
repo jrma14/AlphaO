@@ -12,15 +12,15 @@ timelimit = 10  # seconds
 localBoards = [[0 for i in range(9)] for i in range(9)]
 globalBoard = [0 for i in range(9)]
 
-f = open("first_four_moves", "r")
-
-for line in f:
-    
-    localBoards[int(line[2])][int(line[4])] = line[0]
-    print(line)
-f.close()
-
-print(localBoards)
+# f = open("first_four_moves", "r")
+#
+# for line in f:
+#
+#     localBoards[int(line[2])][int(line[4])] = line[0]
+#     print(line)
+# f.close()
+#
+# print(localBoards)
 
 
 def readMove():
@@ -163,7 +163,7 @@ def checkWinCondition(square):
 
 class Move:
     def __init__(self,position,move):
-        self.position = position.deepcopy()
+        self.position = deepcopy(position)
         self.move = move
         self.cost = evaluatePosition(self.position,move[0])
 
@@ -178,7 +178,7 @@ def getPossibleMoves(position, boardToPlay, maximizingPlayer):
     if checkWinCondition(position[boardToPlay]) == 0 and 0 in position[boardToPlay]:
         for x in range(9):
             if position[boardToPlay][x] == 0:
-                tmp = position.deepcopy()
+                tmp = deepcopy(position)
                 tmp[boardToPlay][x] = player
                 move = Move(tmp,[boardToPlay,x])
                 nextPossibleMoves.append(move)
@@ -187,7 +187,7 @@ def getPossibleMoves(position, boardToPlay, maximizingPlayer):
             if(checkWinCondition(position[x]) == 0):
                 for y in range(9):
                     if position[x][y] == 0:
-                        tmp = position.deepcopy()
+                        tmp = deepcopy(position)
                         tmp[x][y] = player
                         move = Move(tmp,[x,y])
                         nextPossibleMoves.append(move)
@@ -236,7 +236,7 @@ def miniMax(position,boardToPlay, depth, alpha, beta, maximizingPlayer):
 def test():
     board = [[0 for i in range(9)] for i in range(9)]
     print(board)
-    move = miniMax(board,4,10,-INFINITY,INFINITY, False)
+    move = miniMax(board,4,5,-INFINITY,INFINITY, False)
     print(move.move)
     print(board)
 
