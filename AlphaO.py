@@ -1,8 +1,12 @@
 from ast import main
+import json
 from json.encoder import INFINITY
 from multiprocessing.connection import wait
 from os.path import exists
 from copy import deepcopy
+
+costs = json.load(open('costs.json'))
+
 
 mark = 'O'
 
@@ -36,6 +40,7 @@ def readMove():
 
 
 def choseMove():
+    miniMax()
     return (0,0)
 
 
@@ -55,22 +60,29 @@ def waitForTurn():
 
 def main():
     #initialize game board, first 4 moves
+    while not exists('AlphaO.go'):
+        print('waiting for turn')
+    if exists('end_game'):
+        print('game over, did I win?')
+    else:
+        readMove()
 
-
-    #while the game isn't over keep playing.
-    while not exists('end_game'):
-
-        #if its our turn start playing
-        if exists('AlphaO.go'):
-            #perform minimax
-            a = 4
-
-            #write outcome of minimax to move file
-
-
-
-
-        #if its not our turn wait.
+    # #while the game isn't over keep playing.
+    # while not exists('end_game'):
+    #
+    #     #if its our turn start playing
+    #     if exists('AlphaO.go'):
+    #         #perform minimax
+    #
+    #
+    #         #write outcome of minimax to move file
+    #
+    #
+    #
+    #
+    #     #if its not our turn wait.
+    #     else:
+            
 
 
 def evaluatePosition(position,currentBoard):
@@ -78,20 +90,27 @@ def evaluatePosition(position,currentBoard):
     mainBd = []
     evalMultiplier = [1.4,1,1.4,1,1.75,1,1.4,1,1.4]
     for x in range(9):
-        eval += evaluateSquare(position[x])*1.5*evalMultiplier[x]
+        eval += evaluate(position[x])*1.5*evalMultiplier[x]
         if x == currentBoard:
-            eval += evaluateSquare(position[x])*evalMultiplier[x]
+            eval += evaluate(position[x]*evalMultiplier[x])
         tmpEval = checkWinCondition(position[x])
         eval -= tmpEval*evalMultiplier[x]
         mainBd.append(tmpEval)
     eval -= checkWinCondition(mainBd)*5000
-    eval += evaluateSquare(mainBd)*150
+    eval += evaluate(mainBd)*150
 
     return eval
 
 
+#positions: array of array of arrays of len 9, list of positions of big board
+#maximizePlayer: boolean if we are maximizing or minimizing
+#returns sorted array of array of arrays
+def sort(currBoard, positions, maximizePlayer):
+    return sorted(positions, key=lambda pos: evaluatePosition(pos, currBoard), reverse=maximizePlayer)
 
 
+def evaluate(square):
+    return costs[str(square)]
 
 def evaluateSquare(square):
     eval = 0
@@ -153,12 +172,12 @@ def checkWinCondition(square):
     if (square[0] + square[1] + square[2] == a * 3 or square[3] + square[4] + square[5] == a * 3 or square[6] + square[7] + square[8] == a * 3 or square[0] + square[3] + square[6] == a * 3 or square[1] + square[4] + square[7] == a * 3 or
         square[2] + square[5] + square[8] == a * 3 or square[0] + square[4] + square[8] == a * 3 or square[2] + square[4] + square[6] == a * 3):
         return a
-    
+
     a = -1
     if (square[0] + square[1] + square[2] == a * 3 or square[3] + square[4] + square[5] == a * 3 or square[6] + square[7] + square[8] == a * 3 or square[0] + square[3] + square[6] == a * 3 or square[1] + square[4] + square[7] == a * 3 or
         square[2] + square[5] + square[8] == a * 3 or square[0] + square[4] + square[8] == a * 3 or square[2] + square[4] + square[6] == a * 3):
         return a
-    
+
     return 0
 
 class Move:
@@ -192,7 +211,7 @@ def getPossibleMoves(position, boardToPlay, maximizingPlayer):
                         move = Move(tmp,[x,y])
                         nextPossibleMoves.append(move)
     nextPossibleMoves = sorted(nextPossibleMoves, key=lambda m: m.cost, reverse = True)
-    return nextPossibleMoves                    
+    return nextPossibleMoves
 
 
 
