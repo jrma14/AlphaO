@@ -45,11 +45,9 @@ def evaluateSquare(square):
     for x in range(9):
         eval -= square[x] * evalMultiplier[x]
     a = 2
-    if square[0] + square[1] + square[2] == a or square[3] + square[4] + square[5] == a or square[6] + square[7] + \
-            square[8] == a:
+    if square[0] + square[1] + square[2] == a or square[3] + square[4] + square[5] == a or square[6] + square[7] + square[8] == a:
         eval -= 6
-    if square[0] + square[3] + square[6] == a or square[1] + square[4] + square[7] == a or square[2] + square[5] + \
-            square[8] == a:
+    if square[0] + square[3] + square[6] == a or square[1] + square[4] + square[7] == a or square[2] + square[5] + square[8] == a:
         eval -= 6
 
     if square[0] + square[4] + square[8] == a or square[2] + square[4] + square[6] == a:
@@ -143,22 +141,24 @@ def checkWinCondition(map):
 
 # calculateCosts()
 
-arr = generate()
+print(evaluateSquare([0, -1, 1, -1, 0, 1, 0, 1, -1]))
 
-start = time.time()
-costs = json.load(open('costs.json'))
-end = time.time()
-print('Load: ', int((end-start) * 1000), 'ms')
-
-
-start = time.time()
-for i in range(len(arr)):
-    var = costs[str(arr[i])]
-end = time.time()
-print('Map: ', int((end-start) * 1000), 'ms')
-
-start = time.time()
-for i in range(len(arr)):
-    evaluateSquare(arr[i])
-end = time.time()
-print('Evaluate: ', int((end-start) * 1000), 'ms')
+# arr = generate()
+#
+# start = time.time()
+# costs = json.load(open('costs.json'))
+# end = time.time()
+# print('Load: ', int((end-start) * 1000), 'ms')
+#
+#
+# start = time.time()
+# for i in range(len(arr)):
+#     var = costs[str(arr[i])]
+# end = time.time()
+# print('Map: ', int((end-start) * 1000), 'ms')
+#
+# start = time.time()
+# for i in range(len(arr)):
+#     evaluateSquare(arr[i])
+# end = time.time()
+# print('Evaluate: ', int((end-start) * 1000), 'ms')

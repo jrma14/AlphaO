@@ -23,6 +23,9 @@ lastMove = -1
 
 turn = False
 
+depth = 5
+
+
 # player 1 = x 2 = o
 timelimit = 10  # seconds
 
@@ -31,30 +34,38 @@ globalBoard = [0 for i in range(9)]
 
 firstMove = True
 
+start = 0
+
 
 def doTurn():
     file = open('move_file', 'r')
     f = file.readline().split(" ")
-    global turn
-    global firstMove
-    global lastMove
-    if firstMove:
-        firstMove = False
-        empty = not f[0]
-        if empty:
-            replaceXO()
-    else:
-        lastMove = int(f[2])
-        position[int(f[1])][int(f[2])] = 1 # play
-    # start = time.time()
-    print('Calling minimax')
-    move = miniMax(position, lastMove, 5, -INFINITY, INFINITY, False)
-    print('Finished minimax')
-    # end = time.time()
-    # print('Time: ', int((end - start) * 1000), 'ms', end=' ')
-    makeMove(move.move)
-    # print(move.move)
-    # turn = not turn
+    if f[0] != 'AlphaX':
+        global start
+        start = time.time()
+        print('X Thinking')
+        global turn
+        global firstMove
+        global lastMove
+        if firstMove:
+            firstMove = False
+            empty = not f[0]
+            if empty:
+                print('Im player one')
+                replaceXO()
+            else:
+                lastMove = int(f[2])
+                position[int(f[1])][int(f[2])] = 1  # play
+        else:
+            lastMove = int(f[2])
+            position[int(f[1])][int(f[2])] = 1  # play
+        move = miniMax(position, lastMove, depth, -INFINITY, INFINITY, False)
+        makeMove(move.move)
+        position[move.move[0]][move.move[1]] = -1
+        print(time.time() - start)
+        print('Last: ', lastMove)
+        print('Move: ', move.move)
+        # turn = not turn
     file.close()
 
 
@@ -72,6 +83,7 @@ def makeMove(move):
 
 def main():
     global lastMove
+    global position
     while not exists("first_four_moves"):
         pass
     f = open("first_four_moves", "r")
@@ -84,7 +96,8 @@ def main():
     while not exists('end_game'):
         if exists('AlphaX.go'):
             doTurn()
-    print('end game exists dummy')
+            # time.sleep(.1)  # so we don't make two moves in a row
+    print('Game Over')
 
 
 def evaluatePosition(position, currentBoard):
@@ -249,37 +262,39 @@ def getPossibleMoves(position, boardToPlay, maximizingPlayer):
                         tmp[x][y] = player
                         move = Move(tmp, [x, y])
                         nextPossibleMoves.append(move)
-    nextPossibleMoves = sorted(nextPossibleMoves, key=lambda m: m.cost, reverse=True)
+    nextPossibleMoves = sorted(nextPossibleMoves, key=lambda m: m.cost, reverse=not maximizingPlayer)
     return nextPossibleMoves
 
 
 def miniMax(position, boardToPlay, depth, alpha, beta, maximizingPlayer):
-    if depth == 0:
-        tmpMove = Move(position, [-1, -1])
+    tmpMove = Move(position, [-1, -1])
+    if (time.time() - start) >= 9.5 or depth == 0:
         return tmpMove
-    if maximizingPlayer == False:
-        maxEval = Move(position, [0, 0])
-        maxEval.cost = -INFINITY
+    if not maximizingPlayer:
         nextMovePossibilities = getPossibleMoves(position, boardToPlay, False)
+        if len(nextMovePossibilities) == 0:
+            return Move(position,[-1,-1])
+        maxEval = nextMovePossibilities[0]
         for child in nextMovePossibilities:
             eval = miniMax(child.position, child.move[1], depth - 1, alpha, beta, True)
             if eval.cost > maxEval.cost:
-                maxEval = eval
-                maxEval.move = child.move
+                maxEval = deepcopy(eval)
+                maxEval.move = deepcopy(child.move)
             alpha = max(alpha, eval.cost)
             if beta <= alpha:
                 break
         return maxEval
 
-    if maximizingPlayer == True:
-        minEval = Move(position, [0, 0])
-        minEval.cost = INFINITY
+    if maximizingPlayer:
         nextMovePossibilities = getPossibleMoves(position, boardToPlay, True)
+        if len(nextMovePossibilities) == 0:
+            return Move(position,[-1,-1])
+        minEval = nextMovePossibilities[0]
         for child in nextMovePossibilities:
             eval = miniMax(child.position, child.move[1], depth - 1, alpha, beta, False)
             if eval.cost < minEval.cost:
-                minEval = eval
-                minEval.move = child.move
+                minEval = deepcopy(eval)
+                minEval.move = deepcopy(child.move)
             beta = min(beta, eval.cost)
             if beta <= alpha:
                 break
@@ -299,5 +314,7 @@ def test():
     print(move.move)
     print(board)
 
-
 main()
+
+# position = [[1,1,1,0,0,0,0,0,0],[-1,-1,-1,0,0,0,0,0,0],[1,1,1,0,0,0,0,0,0],[-1,-1,-1,0,0,0,0,0,0],[-1,-1,-1,0,0,0,0,0,0],[1,1,1,0,0,0,0,0,0],[1,-1,1,1,1,-1,0,1,0],[1,1,1,0,0,0,0,0,0],[-1,-1,-1,0,0,0,0,0,0]]
+# print(miniMax(position,6,6,-INFINITY, INFINITY,False).move)
