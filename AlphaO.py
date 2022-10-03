@@ -2,7 +2,7 @@ from ast import main
 from json.encoder import INFINITY
 from multiprocessing.connection import wait
 from os.path import exists
-
+from copy import deepcopy
 
 mark = 'O'
 
@@ -163,9 +163,9 @@ def checkWinCondition(square):
 
 class Move:
     def __init__(self,position,move):
-        self.position = position
+        self.position = position.deepcopy()
         self.move = move
-        self.cost = evaluatePosition(position,move[0])
+        self.cost = evaluatePosition(self.position,move[0])
 
 
 
@@ -178,7 +178,7 @@ def getPossibleMoves(position, boardToPlay, maximizingPlayer):
     if checkWinCondition(position[boardToPlay]) == 0 and 0 in position[boardToPlay]:
         for x in range(9):
             if position[boardToPlay][x] == 0:
-                tmp = position.copy()
+                tmp = position.deepcopy()
                 tmp[boardToPlay][x] = player
                 move = Move(tmp,[boardToPlay,x])
                 nextPossibleMoves.append(move)
@@ -187,11 +187,11 @@ def getPossibleMoves(position, boardToPlay, maximizingPlayer):
             if(checkWinCondition(position[x]) == 0):
                 for y in range(9):
                     if position[x][y] == 0:
-                        tmp = position.copy()
+                        tmp = position.deepcopy()
                         tmp[x][y] = player
                         move = Move(tmp,[x,y])
                         nextPossibleMoves.append(move)
-    nextPossibleMoves = sorted(nextPossibleMoves, key=lambda m: m.cost)
+    nextPossibleMoves = sorted(nextPossibleMoves, key=lambda m: m.cost, reverse = True)
     return nextPossibleMoves                    
 
 
@@ -212,6 +212,7 @@ def miniMax(position,boardToPlay, depth, alpha, beta, maximizingPlayer):
             eval = miniMax(child.position,child.move[1], depth -1, alpha,beta, True)
             if eval.cost > maxEval.cost:
                 maxEval = eval
+                maxEval.move = child.move
             alpha = max(alpha, eval.cost)
             if beta <= alpha:
                 break
@@ -225,6 +226,7 @@ def miniMax(position,boardToPlay, depth, alpha, beta, maximizingPlayer):
             eval = miniMax(child.position,child.move[1],depth-1,alpha,beta,False)
             if eval.cost < minEval.cost:
                 minEval = eval
+                minEval.move = child.move
             beta = min(beta,eval.cost)
             if beta <= alpha:
                 break
@@ -232,10 +234,11 @@ def miniMax(position,boardToPlay, depth, alpha, beta, maximizingPlayer):
 
 
 def test():
-    board = [[0.0 for i in range(9)] for i in range(9)]
-    move = miniMax(board,4,6,-INFINITY,INFINITY, False)
+    board = [[0 for i in range(9)] for i in range(9)]
+    print(board)
+    move = miniMax(board,4,10,-INFINITY,INFINITY, False)
     print(move.move)
-
+    print(board)
 
 test()
 
