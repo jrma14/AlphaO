@@ -45,7 +45,7 @@ def doTurn():
             replaceXO()
     else:
         lastMove = int(f[2])
-        position[int(f[1])][int(f[2])] = 1  # play
+        position[int(f[1])][int(f[2])] = 1 # play
     # start = time.time()
     print('Calling minimax')
     move = miniMax(position, lastMove, 5, -INFINITY, INFINITY, False)
@@ -66,7 +66,7 @@ def replaceXO():
 
 def makeMove(move):
     f = open('move_file', 'w')
-    f.write(f'AlphaO {move[0]} {move[1]}')
+    f.write(f'AlphaX {move[0]} {move[1]}')
     f.close()
 
 
@@ -82,9 +82,8 @@ def main():
     f.close()
     # print(position)
     while not exists('end_game'):
-        if exists('AlphaO.go'):
+        if exists('AlphaX.go'):
             doTurn()
-            time.sleep(.05)  # so we don't make two moves in a row
     print('end game exists dummy')
 
 
@@ -300,7 +299,5 @@ def test():
     print(move.move)
     print(board)
 
-
-f = open('dum','w')
 
 main()
