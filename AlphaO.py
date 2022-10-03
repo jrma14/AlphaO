@@ -3,6 +3,7 @@ from json.encoder import INFINITY
 from multiprocessing.connection import wait
 from os.path import exists
 
+
 mark = 'O'
 
 # player 1 = x 2 = o
@@ -79,10 +80,10 @@ def evaluatePosition(position,currentBoard):
     for x in range(9):
         eval += evaluateSquare(position[x])*1.5*evalMultiplier[x]
         if x == currentBoard:
-            eval += evaluateSquare(position[x]*evalMultiplier[x])
+            eval += evaluateSquare(position[x])*evalMultiplier[x]
         tmpEval = checkWinCondition(position[x])
         eval -= tmpEval*evalMultiplier[x]
-        mainBd[x] = tmpEval
+        mainBd.append(tmpEval)
     eval -= checkWinCondition(mainBd)*5000
     eval += evaluateSquare(mainBd)*150
 
@@ -174,7 +175,7 @@ def getPossibleMoves(position, boardToPlay, maximizingPlayer):
         player = 1
     nextPossibleMoves = []
 
-    if checkWinCondition(position[boardToPlay]) == 0 and position[boardToPlay].contains(0):
+    if checkWinCondition(position[boardToPlay]) == 0 and 0 in position[boardToPlay]:
         for x in range(9):
             if position[boardToPlay][x] == 0:
                 tmp = position.copy()
@@ -230,7 +231,12 @@ def miniMax(position,boardToPlay, depth, alpha, beta, maximizingPlayer):
         return minEval
 
 
+def test():
+    board = [[0.0 for i in range(9)] for i in range(9)]
+    move = miniMax(board,4,6,-INFINITY,INFINITY, False)
+    print(move.move)
 
 
+test()
 
 
