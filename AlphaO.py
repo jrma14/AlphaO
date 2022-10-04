@@ -19707,8 +19707,10 @@ lastMove = -1
 
 turn = False
 
+# this is the depth at which our minimax will go to for the first several moves of the game
 depth = 7
 
+# this is the amount of emptyspaces we want to increase the depth level as we reach the end of the game
 emptySpaces = 77
 
 # player 1 = x 2 = o
@@ -19726,7 +19728,11 @@ eval = 0
 
 start = 0
 
-
+# doTurn makes a turn
+# it reads in the last move
+# evaluates the moves it could make (using our minimax function)
+# picks the best move
+# then makes the move that it picked
 def doTurn():
     global count
     global othercount
@@ -19783,13 +19789,20 @@ def replaceXO():
         for j in range(9):
             position[i][j] *= -1
 
-
+# move: a position that is given to make
+# it then writes to the file:
+#                   the position it took
 def makeMove(move):
     f = open('move_file', 'w')
     f.write(f'AlphaO {move[0]} {move[1]}')
     f.close()
 
-
+# has our while loop waiting for our turn
+# when it is our turn to go:
+#                   We read in the move
+#                   We generate the next possible moves
+#                   We evaluate those moves
+#                   We make a move
 def main():
     global lastMove
     global position
@@ -19838,7 +19851,10 @@ def evaluate(square):
     eval += 1
     return costs[str(square)]
 
-
+# square: all the possible moves that can be made in a 3 X 3 tic tac toe
+# we used this to generate all possible tic tac toe games and evaluate ever board
+# depending on how likely we are going to win or not and if we did win or not
+# we do not use this function in our AI, but used it to generate a table our AI uses
 def evaluateSquare(square):
     eval = 0
     evalMultiplier = [0.2, 0.17, 0.2, 0.17, 0.22, 0.17, 0.2, 0.17, 0.2]
@@ -19924,6 +19940,9 @@ def evaluateSquare(square):
     return eval
 
 
+# square: a given 3 X 3 tic tac toe game
+# we check if this game was won or not 
+# in all possible win variations 
 def checkWinCondition(square):
     a = 1
     if (square[0] + square[1] + square[2] == a * 3 or square[3] + square[4] + square[5] == a * 3 or square[6] + square[
@@ -19950,7 +19969,13 @@ class Move:
         self.move = move
         self.cost = evaluatePosition(self.position, move[0])
 
+# position: a total 9 X 9 grid of the currect game state
+# boardToPlay: is the next board we are supposed to play based on the last move
+# maximizingPlayer: determines if this turn is ours or not
+# we check to see if the board we are supposed to play in has been won or not
+# if not then it generates all the moves on that board it can make and returns the full 9 X 9 states we could have depending on the different moves we make
 
+# if we are moving to a game that is not possible then we need to do the same thing above expect on every open position
 def getPossibleMoves(position, boardToPlay, maximizingPlayer):
     player = -1
     if (maximizingPlayer):
@@ -19976,7 +20001,15 @@ def getPossibleMoves(position, boardToPlay, maximizingPlayer):
     nextPossibleMoves = sorted(nextPossibleMoves, key=lambda m: m.cost, reverse=not maximizingPlayer)
     return nextPossibleMoves
 
-
+ 
+# position: a total 9 X 9 grid of the currect game state
+# boardToPlay: is the next board we are supposed to play based on the last move
+# depth: the depth level of how far minimax should go down too
+# alpha:
+# beta: 
+# maximizingPlayer: determines if this turn is ours or not
+# this is our minimax alpha beta pruning algorithm
+# it picks a move based on looking at our table of hueristics and chooses based upon that
 def miniMax(position, boardToPlay, depth, alpha, beta, maximizingPlayer):
     global count
     global othercount
@@ -20019,6 +20052,16 @@ def miniMax(position, boardToPlay, depth, alpha, beta, maximizingPlayer):
         return minEval
 
 
+
+
+
+
+
+main()
+
+
+
+#might want to get rid of this--------------------------------------
 def test():
     board = [[0 for i in range(9)] for i in range(9)]
     board[4][0] = 1
@@ -20034,7 +20077,11 @@ def test():
 
 # test()
 
-main()
+
+
+
+#----------------------------might want to get rid of this stuff below
+
 
 position = [[-1,0,0,0,1,0,1,0,0],[0,0,0,0,0,0,0,0,0],[-1,0,0,0,-1,0,0,0,-1],[0,0,0,0,0,0,0,0,0],[1,1,1,0,-1,0,0,0,1],[0,0,0,0,0,0,0,0,0],[0,0,0,0,-1,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,1,0,-1,0,0,0,0]]
 print(evaluatePosition(position,4))
