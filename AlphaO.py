@@ -23,29 +23,40 @@ lastMove = -1
 
 turn = False
 
-depth = 5
+depth = 7
 
+emptySpaces = 77
 
 # player 1 = x 2 = o
-timelimit = 200  # seconds
+timelimit = 10  # seconds
+timeBuffer = 0.09
 
 position = [[0 for i in range(9)] for i in range(9)]
 globalBoard = [0 for i in range(9)]
 
 firstMove = True
 
+count = 0
+othercount = 0
+
 start = 0
 
 
 def doTurn():
+    global count
+    global othercount
+    count = 0
+    othercount = 0
     file = open('move_file', 'r')
     f = file.readline().split(" ")
     if f[0] != 'AlphaO':
         global start
         start = time.time()
         print('O Thinking')
+        global depth
         global turn
         global firstMove
+        global emptySpaces
         global lastMove
         if firstMove:
             firstMove = False
@@ -57,13 +68,22 @@ def doTurn():
                 lastMove = int(f[2])
                 position[int(f[1])][int(f[2])] = 1  # play
         else:
+            emptySpaces -= 1
             lastMove = int(f[2])
             position[int(f[1])][int(f[2])] = 1  # play
+            print(int(f[1]), int(f[2]))
         move = miniMax(position, lastMove, depth, -INFINITY, INFINITY, False)
         makeMove(move.move)
         position[move.move[0]][move.move[1]] = -1
+        emptySpaces -= 1
+        if emptySpaces <= 20:
+            depth = 8
+        print(move.move)
+        print('count',count)
+        print('othercount',othercount)
+
         # print('Eval: ',move.cost)
-        # print('Time: ', time.time() - start)
+        print('Time: ', time.time() - start)
         # print('Last: ', lastMove)
         # print('Move: ', move.move)
         # turn = not turn
@@ -268,18 +288,20 @@ def getPossibleMoves(position, boardToPlay, maximizingPlayer):
 
 
 def miniMax(position, boardToPlay, depth, alpha, beta, maximizingPlayer):
+    global count
+    global othercount
+    othercount += 1
+    if depth == 0:
+        count += 1
     tmpMove = Move(position, [-1, -1])
-    if (time.time() - start) >= timelimit or depth == 0:
+    if (time.time() - start) >= timelimit - timeBuffer or depth == 0:
         return tmpMove
     if not maximizingPlayer:
         nextMovePossibilities = getPossibleMoves(position, boardToPlay, False)
-        # if depth == 5:
-        #     for move in nextMovePossibilities:
-        #         print('Cost: ', move.cost)
-        #         print('Move: ', move.move)
         if len(nextMovePossibilities) == 0:
-            return Move(position,[-1,-1])
+            return Move(position, [-1, -1])
         maxEval = nextMovePossibilities[0]
+        maxEval.cost = -INFINITY
         for child in nextMovePossibilities:
             eval = miniMax(child.position, child.move[1], depth - 1, alpha, beta, True)
             if eval.cost > maxEval.cost:
@@ -293,8 +315,9 @@ def miniMax(position, boardToPlay, depth, alpha, beta, maximizingPlayer):
     if maximizingPlayer:
         nextMovePossibilities = getPossibleMoves(position, boardToPlay, True)
         if len(nextMovePossibilities) == 0:
-            return Move(position,[-1,-1])
+            return Move(position, [-1, -1])
         minEval = nextMovePossibilities[0]
+        minEval.cost = INFINITY
         for child in nextMovePossibilities:
             eval = miniMax(child.position, child.move[1], depth - 1, alpha, beta, False)
             if eval.cost < minEval.cost:
@@ -309,15 +332,17 @@ def miniMax(position, boardToPlay, depth, alpha, beta, maximizingPlayer):
 def test():
     board = [[0 for i in range(9)] for i in range(9)]
     board[4][0] = 1
-    board[4][3] = 1
     board[4][6] = 1
     print(board)
+    global start
     start = time.time()
-    move = miniMax(board, 4, 5, -INFINITY, INFINITY, False)
+    move = miniMax(board, 1, 5, -INFINITY, INFINITY, False)
     end = time.time()
     print('Minimax: ', int((end - start) * 1000), 'ms')
     print(move.move)
-    print(board)
+
+
+# test()
 
 main()
 
