@@ -273,14 +273,13 @@ def miniMax(position, boardToPlay, depth, alpha, beta, maximizingPlayer):
         return tmpMove
     if not maximizingPlayer:
         nextMovePossibilities = getPossibleMoves(position, boardToPlay, False)
-        # if depth == 5:
-        #     for move in nextMovePossibilities:
-        #         print('Cost: ', move.cost)
-        #         print('Move: ', move.move)
         if len(nextMovePossibilities) == 0:
             return Move(position,[-1,-1])
         maxEval = nextMovePossibilities[0]
+        maxEval.cost = -INFINITY
         for child in nextMovePossibilities:
+            if(depth == 5 or depth == 4):
+                print(str(depth) + "  " + str(maxEval.cost) + "  " + str(maxEval.move))
             eval = miniMax(child.position, child.move[1], depth - 1, alpha, beta, True)
             if eval.cost > maxEval.cost:
                 maxEval = deepcopy(eval)
@@ -295,7 +294,10 @@ def miniMax(position, boardToPlay, depth, alpha, beta, maximizingPlayer):
         if len(nextMovePossibilities) == 0:
             return Move(position,[-1,-1])
         minEval = nextMovePossibilities[0]
+        minEval.cost = INFINITY
         for child in nextMovePossibilities:
+            if(depth == 5 or depth == 4):
+                print(str(depth) + "  " + str(minEval.cost) + "  " + str(minEval.move))
             eval = miniMax(child.position, child.move[1], depth - 1, alpha, beta, False)
             if eval.cost < minEval.cost:
                 minEval = deepcopy(eval)
@@ -309,17 +311,15 @@ def miniMax(position, boardToPlay, depth, alpha, beta, maximizingPlayer):
 def test():
     board = [[0 for i in range(9)] for i in range(9)]
     board[4][0] = 1
-    board[4][3] = 1
     board[4][6] = 1
     print(board)
+    global start
     start = time.time()
-    move = miniMax(board, 4, 5, -INFINITY, INFINITY, False)
+    move = miniMax(board, 1, 5, -INFINITY, INFINITY, False)
     end = time.time()
     print('Minimax: ', int((end - start) * 1000), 'ms')
     print(move.move)
-    print(board)
-
-main()
+test()
 
 # position = [[-1,0,0,0,1,0,1,0,0],[0,0,0,0,0,0,0,0,0],[-1,0,0,0,-1,0,0,0,-1],[0,0,0,0,0,0,0,0,0],[1,1,1,0,-1,0,0,0,1],[0,0,0,0,0,0,0,0,0],[0,0,0,0,-1,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,1,0,-1,0,0,0,0]]
 # print(evaluatePosition(position,4))
