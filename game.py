@@ -7,8 +7,8 @@ import display as disp
 import human
 
 
-def nums_output(nums):
-    symbols = ['X', 'O']
+def nums_output(nums, p1_name, p2_name):
+    symbols = [p1_name, p2_name]
     s = ''
     i = 0
     j = 1
@@ -56,7 +56,7 @@ class Game:
         if rand_start:
             nums = gp.get_init_random_string()
             ffm = open("first_four_moves", "w")
-            ffm.write(nums_output(nums))
+            ffm.write(nums_output(nums, p1_name, p2_name))
             ffm.close()
             i = 0
             j = 1
@@ -82,7 +82,6 @@ class Game:
 
             if self.winner != gp.NO_MARKER:
                 self.end_game()
-                running = False
                 continue
 
             current_marker = self.markers[self.current_player]
@@ -108,6 +107,7 @@ class Game:
                     self.winner = gp.DRAW
                 self.end_game(reason=msg)
                 running = False
+                continue
             else:
                 selected_move = move
 
@@ -135,6 +135,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                    continue
 
             #  Drawing function
             disp.draw_game_board(self.main_board, self.main_board_wins, self.current_local_board, disp.X_OFFSET,
@@ -158,6 +159,8 @@ class Game:
         eg.write(msg)
         print(msg)
         eg.close()
+        open("{p}.go".format(p=self.names[0]), "w").close()
+        open("{p}.go".format(p=self.names[1]), "w").close()
         disp.wait_for_player_press()
 
 
